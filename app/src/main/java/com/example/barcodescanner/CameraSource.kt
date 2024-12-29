@@ -67,9 +67,9 @@ class CameraSource(private val context: Context, private val surfaceView: Surfac
 
                     // Ограничение области интереса (например, центральная часть экрана)
                     val roiLeft = previewSize.width / 4
-                    val roiTop = previewSize.height / 4
+                    val roiTop = previewSize.height / 3
                     val roiWidth = previewSize.width / 2
-                    val roiHeight = previewSize.height / 2
+                    val roiHeight = previewSize.height / 3
 
                     val croppedData = cropData(data, roiLeft, roiTop, roiWidth, roiHeight, previewSize)
 

@@ -19,6 +19,7 @@
     import com.google.android.gms.vision.Detector
     import com.google.android.gms.vision.barcode.Barcode
     import com.google.android.gms.vision.barcode.BarcodeDetector
+    import org.apache.poi.hssf.usermodel.HSSFWorkbook
     import org.apache.poi.ss.usermodel.Row
     import org.apache.poi.xssf.usermodel.XSSFWorkbook
     import java.io.File
@@ -47,7 +48,7 @@
             roiView = RoiView(this) // Создаем новый элемент для отображения ROI
             addContentView(roiView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
 
-            val fileName = intent.getStringExtra("FILE_NAME") ?: "default.xlsx"
+            val fileName = intent.getStringExtra("FILE_NAME") ?: "default.xls"
 
             // Инициализация детектора для сканирования штрих-кодов
             barcodeDetector = BarcodeDetector.Builder(this)
@@ -152,14 +153,14 @@
             }
 
             // Полный путь к файлу Excel
-            val filePath = "${directoryPath}/${fileName}_${current_dates}.xlsx"
+            val filePath = "${directoryPath}/${fileName}_${current_dates}.xls"
             val file = File(filePath)
 
             // Проверка, существует ли файл Excel
             if (!file.exists()) {
                 // Создание нового Excel файла, если он не существует
-                val workbook = XSSFWorkbook()
-                val sheet = workbook.createSheet("Sheet1")
+                val workbook = HSSFWorkbook()
+                val sheet = workbook.createSheet("Scanned Data")
 
                 val headerRow: Row = sheet.createRow(0)
                 headerRow.createCell(0).setCellValue(fileName) // Имя файла
@@ -176,7 +177,7 @@
             } else {
                 // Если файл существует, добавляем новое значение сканирования
                 FileInputStream(file).use { inputStream ->
-                    val workbook = XSSFWorkbook(inputStream)
+                    val workbook = HSSFWorkbook(inputStream)
                     val sheet = workbook.getSheetAt(0)
 
                     // Находим следующую пустую строку
@@ -205,9 +206,9 @@
                 }
 
                 val roiLeft = width / 4
-                val roiTop = height / 4
+                val roiTop = height / 3
                 val roiWidth = width / 2
-                val roiHeight = height / 2
+                val roiHeight = height / 3
 
                 canvas.drawRect(roiLeft.toFloat(), roiTop.toFloat(), (roiLeft + roiWidth).toFloat(), (roiTop + roiHeight).toFloat(), paint)
             }
