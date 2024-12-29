@@ -1,11 +1,17 @@
     package com.example.barcodescanner
 
     import android.Manifest
+    import android.content.Context
     import android.content.pm.PackageManager
+    import android.graphics.Canvas
+    import android.graphics.Color
+    import android.graphics.Paint
     import android.os.Bundle
     import android.util.Log
     import android.view.SurfaceHolder
     import android.view.SurfaceView
+    import android.view.View
+    import android.view.ViewGroup
     import android.widget.Button
     import android.widget.Toast
     import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +35,7 @@
         private lateinit var cameraSource: CameraSource
         private lateinit var barcodeDetector: BarcodeDetector
         private var isScanning = false
+        private lateinit var roiView: RoiView
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -37,6 +44,8 @@
             cameraPreview = findViewById(R.id.cameraPreview)
             scanButton = findViewById(R.id.scanButton)
             exitButton = findViewById(R.id.exitButton)
+            roiView = RoiView(this) // Создаем новый элемент для отображения ROI
+            addContentView(roiView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
 
             val fileName = intent.getStringExtra("FILE_NAME") ?: "default.xlsx"
 
@@ -182,6 +191,25 @@
                     }
                     workbook.close()
                 }
+            }
+        }
+
+        private class RoiView(context: Context) : View(context) {
+            override fun onDraw(canvas: Canvas) {
+                super.onDraw(canvas)
+
+                val paint = Paint().apply {
+                    color = Color.RED
+                    style = Paint.Style.STROKE
+                    strokeWidth = 5f
+                }
+
+                val roiLeft = width / 4
+                val roiTop = height / 4
+                val roiWidth = width / 2
+                val roiHeight = height / 2
+
+                canvas.drawRect(roiLeft.toFloat(), roiTop.toFloat(), (roiLeft + roiWidth).toFloat(), (roiTop + roiHeight).toFloat(), paint)
             }
         }
 

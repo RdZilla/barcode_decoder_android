@@ -65,8 +65,21 @@ class CameraSource(private val context: Context, private val surfaceView: Surfac
                     val parameters = camera.parameters
                     val previewSize = parameters.previewSize
 
+                    // Ограничение области интереса (например, центральная часть экрана)
+                    val roiLeft = previewSize.width / 4
+                    val roiTop = previewSize.height / 4
+                    val roiWidth = previewSize.width / 2
+                    val roiHeight = previewSize.height / 2
+
+                    val croppedData = cropData(data, roiLeft, roiTop, roiWidth, roiHeight, previewSize)
+
                     val frame = Frame.Builder()
-                        .setImageData(ByteBuffer.wrap(data), previewSize.width, previewSize.height, ImageFormat.NV21)
+                        .setImageData(
+                            ByteBuffer.wrap(croppedData),
+                            roiWidth,
+                            roiHeight,
+                            ImageFormat.NV21
+                        )
                         .build()
 
                     detector.receiveFrame(frame)
@@ -76,6 +89,27 @@ class CameraSource(private val context: Context, private val surfaceView: Surfac
                 camera?.startPreview() // Запускаем предварительный просмотр.
             }
         }
+    }
+
+    private fun cropData(
+        data: ByteArray,
+        left: Int,
+        top: Int,
+        width: Int,
+        height: Int,
+        previewSize: Camera.Size
+    ): ByteArray {
+        // Метод для обрезки данных из камеры по заданной области (ROI)
+        val rowStride = previewSize.width
+        val croppedData = ByteArray(width * height)
+
+        for (y in 0 until height) {
+            val sourceIndex = (top + y) * rowStride + left
+            val destinationIndex = y * width
+            System.arraycopy(data, sourceIndex, croppedData, destinationIndex, width)
+        }
+
+        return croppedData
     }
 
     private fun setCameraDisplayOrientation() {
