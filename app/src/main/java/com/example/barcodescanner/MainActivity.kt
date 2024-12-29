@@ -20,17 +20,23 @@ class MainActivity : AppCompatActivity() {
     private lateinit var startButton: Button
 
     // Переменная для обработки результатов запроса разрешений
-    private val requestPermissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-        if (permissions[Manifest.permission.CAMERA] == true &&
-            permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true &&
-            permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] == true) {
-            // Все разрешения предоставлены, загружаем имена файлов
-            loadFileNames()
-        } else {
-            // Разрешения не были предоставлены, показываем сообщение пользователю
-            Toast.makeText(this, "Необходимы разрешения для работы приложения", Toast.LENGTH_LONG).show()
+    private val requestPermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            if (permissions[Manifest.permission.CAMERA] == true &&
+                permissions[Manifest.permission.READ_EXTERNAL_STORAGE] == true &&
+                permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
+            ) {
+                // Все разрешения предоставлены, загружаем имена файлов
+                loadFileNames()
+            } else {
+                // Разрешения не были предоставлены, показываем сообщение пользователю
+                Toast.makeText(
+                    this,
+                    "Необходимы разрешения для работы приложения",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,18 +58,23 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkAndRequestPermissions() {
         val cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-        val readStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-        val writeStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val readStoragePermission =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val writeStoragePermission =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         if (cameraPermission != PackageManager.PERMISSION_GRANTED ||
             readStoragePermission != PackageManager.PERMISSION_GRANTED ||
-            writeStoragePermission != PackageManager.PERMISSION_GRANTED) {
+            writeStoragePermission != PackageManager.PERMISSION_GRANTED
+        ) {
             // Запрашиваем разрешения
-            requestPermissionsLauncher.launch(arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ))
+            requestPermissionsLauncher.launch(
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            )
         } else {
             // Разрешения уже предоставлены, загружаем имена файлов сразу
             loadFileNames()

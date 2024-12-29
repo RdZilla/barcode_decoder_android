@@ -12,7 +12,11 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.Frame
 import java.nio.ByteBuffer
 
-class CameraSource(private val context: Context, private val surfaceView: SurfaceView, private val detector: Detector<*>) {
+class CameraSource(
+    private val context: Context,
+    private val surfaceView: SurfaceView,
+    private val detector: Detector<*>
+) {
 
     private var camera: Camera? = null
     private var isProcessing = false
@@ -24,7 +28,12 @@ class CameraSource(private val context: Context, private val surfaceView: Surfac
                 start(holder)
             }
 
-            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+            override fun surfaceChanged(
+                holder: SurfaceHolder,
+                format: Int,
+                width: Int,
+                height: Int
+            ) {
                 // Этот метод можно оставить пустым или добавить логику для обработки изменений поверхности.
                 setCameraDisplayOrientation()
             }
@@ -38,6 +47,7 @@ class CameraSource(private val context: Context, private val surfaceView: Surfac
     fun getCamera(): Camera? {
         return camera
     }
+
     @Throws(Exception::class)
     fun start(holder: SurfaceHolder) {
         synchronized(cameraLock) {
@@ -71,7 +81,8 @@ class CameraSource(private val context: Context, private val surfaceView: Surfac
                     val roiWidth = previewSize.width / 2
                     val roiHeight = previewSize.height / 3
 
-                    val croppedData = cropData(data, roiLeft, roiTop, roiWidth, roiHeight, previewSize)
+                    val croppedData =
+                        cropData(data, roiLeft, roiTop, roiWidth, roiHeight, previewSize)
 
                     val frame = Frame.Builder()
                         .setImageData(
